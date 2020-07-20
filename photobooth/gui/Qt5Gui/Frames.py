@@ -961,11 +961,7 @@ class Settings(QtWidgets.QFrame):
 
         enable_gcp = QtWidgets.QCheckBox()
         enable_gcp.setChecked(self._cfg.getBool('UploadWebdav', 'enable_gcp'))
-        print("bool: " + str(self._cfg.getBool('UploadWebdav', 'enable_gcp')))
         self.add('UploadWebdav', 'enable_gcp', enable_gcp)
-
-        project = QtWidgets.QLineEdit(self._cfg.get('UploadWebdav', 'project'))
-        self.add('UploadWebdav', 'project', project)
 
         service_account = QtWidgets.QLineEdit(self._cfg.get('UploadWebdav', 'service_account'))
         self.add('UploadWebdav', 'service_account', service_account)
@@ -978,7 +974,6 @@ class Settings(QtWidgets.QFrame):
         layout.addRow(_('URL (folder must exist):'), url)
         layout.addRow(_('Server requires auth:'), lay_auth)
         layout.addRow(_('Enable GCP upload:'), enable_gcp)
-        layout.addRow(_('Project:'), project)
         layout.addRow(_('Location of the service account:'), service_account)
         layout.addRow(_('Bucket:'), bucket)
 
@@ -1101,8 +1096,6 @@ class Settings(QtWidgets.QFrame):
 
         self._cfg.set('UploadWebdav', 'enable_gcp',
                       str(self.get('UploadWebdav', 'enable_gcp').isChecked()))
-        self._cfg.set('UploadWebdav', 'project',
-                      str(self.get('UploadWebdav', 'project').text()))
         self._cfg.set('UploadWebdav', 'service_account',
                       str(self.get('UploadWebdav', 'service_account').text()))
         self._cfg.set('UploadWebdav', 'bucket',

@@ -23,6 +23,7 @@ import requests
 from pathlib import Path
 
 from .WorkerTask import WorkerTask
+from google.cloud.storage import Client
 
 
 class PictureUploadGCP(WorkerTask):
@@ -33,10 +34,18 @@ class PictureUploadGCP(WorkerTask):
 
         if config.getBool('UploadWebdav', 'enable_gcp'):
             self._project = config.get('UploadWebdav', 'project')
-            self._project = config.get('UploadWebdav', 'service_account')
-            self._project = config.get('UploadWebdav', 'bucket')
+            service_account_location = str(config.get('UploadWebdav', 'service_account'))
+            if (len(service_account_location) != 0):
+                self._client = Client.from_service_account_json(service_account_location)
+            self._bucket = config.get('UploadWebdav', 'bucket')
+
 
     def do(self, picture, filename):
 
         print("Uploading the picture now!")
-        #TODO: implement GCP upload
+        storage_client = self._client
+        bucket = storage_client.bucket(self._bucket)
+        blob = bucket.blob(filename)
+        blob.upload_from_string(picture.getvalue())
+        #URL that needs to be turned into a QR code
+        print(f"https://storage.googleapis.com/{self._bucket}/{filename}")
