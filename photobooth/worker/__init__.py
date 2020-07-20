@@ -67,6 +67,7 @@ class Worker:
         if config.getBool('UploadWebdav', 'enable'):
             self._postprocess_tasks.append(PictureUploadWebdav(config))
 
+        # PictureUploadGCP to upload pictures to a GCP storage
         if config.getBool('UploadWebdav', 'enable_gcp'):
             self._postprocess_tasks.append(PictureUploadGCP(config))
 
@@ -76,9 +77,6 @@ class Worker:
 
         # PictureSaver for single shots
         self._picture_tasks.append(PictureSaver(self._shot_list.basename))
-
-        if config.getBool('UploadWebdav', 'enable_gcp'):
-            self._picture_tasks.append(PictureUploadGCP(config))
 
     def run(self):
 
