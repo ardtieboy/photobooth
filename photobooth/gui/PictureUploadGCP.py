@@ -22,7 +22,7 @@ import requests
 
 from pathlib import Path
 
-from .WorkerTask import WorkerTask
+from photobooth.worker.WorkerTask import WorkerTask
 from google.cloud.storage import Client
 
 
@@ -47,5 +47,5 @@ class PictureUploadGCP(WorkerTask):
         bucket = storage_client.bucket(self._bucket)
         blob = bucket.blob(filename)
         blob.upload_from_string(picture.getvalue())
-        #URL that needs to be turned into a QR code
-        print(f"https://storage.googleapis.com/{self._bucket}/{filename}")
+        print(blob.public_url)
+        return blob.public_url

@@ -36,7 +36,8 @@ from . import styles
 from . import Frames
 from . import Receiver
 from . import Worker
-
+from ..PictureUploadGCP import PictureUploadGCP
+import uuid
 
 class PyQt5Gui(GuiSkeleton):
 
@@ -51,7 +52,10 @@ class PyQt5Gui(GuiSkeleton):
         self._initWorker()
 
         self._picture = None
+        self._download_link = None
+
         self._postprocess = GuiPostprocessor(self._cfg)
+        self._uploader = PictureUploadGCP(config)
 
     def run(self):
 
@@ -220,6 +224,7 @@ class PyQt5Gui(GuiSkeleton):
 
         picture = Image.open(state.picture)
         self._picture = ImageQt.ImageQt(picture)
+        self._download_link = self._uploader.do(state.picture, uuid.uuid4().hex)
         review_time = self._cfg.getInt('Photobooth', 'display_time') * 1000
         self._setWidget(Frames.PictureMessage(self._picture))
         QtCore.QTimer.singleShot(
@@ -235,7 +240,7 @@ class PyQt5Gui(GuiSkeleton):
         Frames.PostprocessMessage(
             self._gui.centralWidget(), tasks, self._worker,
             lambda: self._comm.send(Workers.MASTER, GuiEvent('idle')),
-            postproc_t * 1000)
+            self._download_link, postproc_t * 1000)
 
     def _handleKeypressEvent(self, event):
 

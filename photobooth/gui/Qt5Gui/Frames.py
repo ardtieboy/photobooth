@@ -316,7 +316,7 @@ class CountdownMessage(QtWidgets.QFrame):
 
 class PostprocessMessage(Widgets.TransparentOverlay):
 
-    def __init__(self, parent, tasks, worker, idle_handle,
+    def __init__(self, parent, tasks, worker, idle_handle, download_link,
                  timeout=None, timeout_handle=None):
 
         if timeout_handle is None:
@@ -324,9 +324,9 @@ class PostprocessMessage(Widgets.TransparentOverlay):
 
         super().__init__(parent, timeout, timeout_handle)
         self.setObjectName('PostprocessMessage')
-        self.initFrame(tasks, idle_handle, worker)
+        self.initFrame(tasks, idle_handle, worker, download_link)
 
-    def initFrame(self, tasks, idle_handle, worker):
+    def initFrame(self, tasks, idle_handle, worker, download_link):
 
         def disableAndCall(button, handle):
             button.setEnabled(False)
@@ -348,6 +348,8 @@ class PostprocessMessage(Widgets.TransparentOverlay):
             button_lay.addWidget(button, *pos)
 
         layout = QtWidgets.QVBoxLayout()
+        # layout.addWidget(QtWidgets.QLabel(_(download_link)))
+        layout.addWidget(PictureMessage(QtGui.QImage('/Users/ardscheirlynck/Downloads/Obama.png')))
         layout.addWidget(QtWidgets.QLabel(_('Happy?')))
         layout.addLayout(button_lay)
         self.setLayout(layout)
