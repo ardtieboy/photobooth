@@ -31,9 +31,11 @@ class PictureUploadGCP(WorkerTask):
     def __init__(self, config):
 
         super().__init__()
+        self._do_upload = False
 
         if config.getBool('UploadWebdav', 'enable_gcp'):
             self._project = config.get('UploadWebdav', 'project')
+            self._do_upload = True
             service_account_location = str(config.get('UploadWebdav', 'service_account'))
             if (len(service_account_location) != 0):
                 self._client = Client.from_service_account_json(service_account_location)
@@ -42,10 +44,13 @@ class PictureUploadGCP(WorkerTask):
 
     def do(self, picture, filename):
 
-        print("Uploading the picture now!")
-        storage_client = self._client
-        bucket = storage_client.bucket(self._bucket)
-        blob = bucket.blob(filename)
-        blob.upload_from_string(picture.getvalue())
-        print(blob.public_url)
-        return blob.public_url
+        if self._do_upload:
+            print("Uploading the picture now!")
+            storage_client = self._client
+            bucket = storage_client.bucket(self._bucket)
+            blob = bucket.blob(filename)
+            blob.upload_from_string(picture.getvalue())
+            print(blob.public_url)
+            return blob.public_url
+        else:
+            return None
