@@ -33,6 +33,8 @@ from ... import printer
 from . import Widgets
 from . import styles
 
+import qrcode
+import PIL.Image
 
 class Welcome(QtWidgets.QFrame):
 
@@ -166,6 +168,34 @@ class PictureMessage(QtWidgets.QFrame):
 
         super().__init__()
         self.setObjectName('PictureMessage')
+
+        self._picture = picture
+
+    def _paintPicture(self, painter):
+
+        if isinstance(self._picture, QtGui.QImage):
+            pix = QtGui.QPixmap.fromImage(self._picture)
+        else:
+            pix = QtGui.QPixmap(self._picture)
+        pix = pix.scaled(self.contentsRect().size(), QtCore.Qt.KeepAspectRatio,
+                         QtCore.Qt.SmoothTransformation)
+
+        origin = ((self.width() - pix.width()) // 2,
+                  (self.height() - pix.height()) // 2)
+        painter.drawPixmap(QtCore.QPoint(*origin), pix)
+
+    def paintEvent(self, event):
+
+        painter = QtGui.QPainter(self)
+        self._paintPicture(painter)
+        painter.end()
+
+class QRCodeMessage(QtWidgets.QFrame):
+
+    def __init__(self, picture):
+
+        super().__init__()
+        self.setObjectName('QrCodeMessage')
 
         self._picture = picture
 
@@ -348,8 +378,23 @@ class PostprocessMessage(Widgets.TransparentOverlay):
             button_lay.addWidget(button, *pos)
 
         layout = QtWidgets.QVBoxLayout()
-        # layout.addWidget(QtWidgets.QLabel(_(download_link)))
-        layout.addWidget(PictureMessage(QtGui.QImage('/Users/ardscheirlynck/Downloads/Obama.png')))
+
+        im = qrcode.make(download_link)
+        im.save('/Users/ardscheirlynck/Downloads/blaat.png')
+
+        print(im.mode)
+        # if im.mode == "RGB":
+        #     pass
+        # elif im.mode == "L":
+        data = im.tobytes("raw", "1")
+        # prolly resize here?
+        qim = QtGui.QImage(data, 45,45, QtGui.QImage.Format_Mono)
+        # layout.addWidget(QRCodeMessage(qim))
+        pixmap = QtGui.QPixmap.fromImage(qim)
+
+        lbl = QtWidgets.QLabel()
+        lbl.setPixmap(pixmap)
+        layout.addWidget(lbl)
         layout.addWidget(QtWidgets.QLabel(_('Happy?')))
         layout.addLayout(button_lay)
         self.setLayout(layout)

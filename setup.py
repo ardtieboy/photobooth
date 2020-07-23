@@ -190,7 +190,8 @@ setup(
         'gphoto2',
         'pycups',
         'requests',
-        'google-cloud-storage'
+        'google-cloud-storage',
+        'qrcode'
         ],
 
     # List additional groups of dependencies here (e.g. development
