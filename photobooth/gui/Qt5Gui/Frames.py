@@ -383,13 +383,9 @@ class PostprocessMessage(Widgets.TransparentOverlay):
         im.save('/Users/ardscheirlynck/Downloads/blaat.png')
 
         print(im.mode)
-        # if im.mode == "RGB":
-        #     pass
-        # elif im.mode == "L":
         data = im.tobytes("raw", "1")
-        # prolly resize here?
-        qim = QtGui.QImage(data, 45,45, QtGui.QImage.Format_Mono)
-        # layout.addWidget(QRCodeMessage(qim))
+        # qim = QtGui.QImage(data, im.size[0], im.size[1], QtGui.QImage.Format_Mono)
+        qim = QtGui.QImage('/Users/ardscheirlynck/Downloads/blaat.png')
         pixmap = QtGui.QPixmap.fromImage(qim)
 
         lbl = QtWidgets.QLabel()
